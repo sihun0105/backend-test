@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Category } from './challenge1-type';
+import { Category, ConvertedProduct } from './challenge1-type';
 import { UtilsService } from './utils/utils.service';
-import { TranslateWord } from './challenge2-type';
+import { Option, TranslateWord } from './challenge2-type';
 
 @Injectable()
 export class AppService {
@@ -17,7 +17,7 @@ export class AppService {
    * 목표
    * 상품을 수집할 때 제공된 키워드를 기반으로 카테고리 목록과 매칭하여 상품에 카테고리 정보를 연결하는 프로세스를 구현합니다.
    */
-  async challenge1(): Promise<number> {
+  async challenge1(): Promise<ConvertedProduct> {
     const categoryList: Category[] = [
       { id: 1, name: '가구' },
       { id: 2, name: '공구' },
@@ -39,10 +39,13 @@ export class AppService {
       product,
       categoryList,
     );
+    if (!convertedProduct) {
+      throw new Error('상품이 없습니다.');
+    }
 
-    console.log(convertedProduct);
     const end = Date.now();
-    return end - start;
+    console.log(end - start);
+    return convertedProduct;
   }
 
   /**
@@ -51,7 +54,7 @@ export class AppService {
    * 목표
    * 옵션 이름에 나타난 특정 단어들을 주어진 단어 치환 목록을 사용하여 변경합니다.
    */
-  async challenge2(): Promise<number> {
+  async challenge2(): Promise<Option[]> {
     const translateWordList: TranslateWord[] = [
       { src: '블랙', dest: '검정색' },
       { src: '레드', dest: '빨간색' },
@@ -83,9 +86,11 @@ export class AppService {
         return { ...option, name };
       }),
     );
-
-    console.log(result);
+    if (!result) {
+      throw new Error('옵션이 없습니다.');
+    }
     const end = Date.now();
-    return end - start;
+    console.log(end - start);
+    return result;
   }
 }
