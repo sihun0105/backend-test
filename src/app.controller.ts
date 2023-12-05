@@ -1,5 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
+import { ConvertedProduct } from './challenge1-type';
+import { Option } from './challenge2-type';
+import { RateLimitGuard } from './rate-limit/rate-limit.guard';
 
 @Controller()
 export class AppController {
@@ -10,14 +13,14 @@ export class AppController {
   proxy() {
     return this.appService.proxy();
   }
-
+  @UseGuards(RateLimitGuard)
   @Get('challenge1')
-  async challenge1(): Promise<number> {
+  async challenge1(): Promise<ConvertedProduct> {
     return await this.appService.challenge1();
   }
-
+  @UseGuards(RateLimitGuard)
   @Get('challenge2')
-  async challenge2(): Promise<number> {
+  async challenge2(): Promise<Option[]> {
     return await this.appService.challenge2();
   }
 }
