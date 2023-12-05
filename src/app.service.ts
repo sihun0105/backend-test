@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Category } from './challenge1-type';
 import { UtilsService } from './utils/utils.service';
+import { TranslateWord } from './challenge2-type';
 
 @Injectable()
 export class AppService {
@@ -50,8 +51,8 @@ export class AppService {
    * 목표
    * 옵션 이름에 나타난 특정 단어들을 주어진 단어 치환 목록을 사용하여 변경합니다.
    */
-  challenge2(): number {
-    const translateWordList = [
+  async challenge2(): Promise<number> {
+    const translateWordList: TranslateWord[] = [
       { src: '블랙', dest: '검정색' },
       { src: '레드', dest: '빨간색' },
     ];
@@ -73,6 +74,17 @@ export class AppService {
 
     const start = Date.now();
 
+    const result = await Promise.all(
+      optionList.map(async (option) => {
+        const name = await this.utilsService.translateOptionName(
+          option.name,
+          translateWordList,
+        );
+        return { ...option, name };
+      }),
+    );
+
+    console.log(result);
     const end = Date.now();
     return end - start;
   }

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConvertedProduct } from 'src/challenge1-type';
+import { TranslateWord } from 'src/challenge2-type';
 
 @Injectable()
 export class UtilsService {
@@ -20,5 +21,18 @@ export class UtilsService {
       };
     }
     return convertedProduct;
+  }
+  async translateOptionName(
+    optionName: string,
+    translateWordList: TranslateWord[],
+  ): Promise<string> {
+    let translatedOptionName = optionName;
+    for (const translateWord of translateWordList) {
+      translatedOptionName = translatedOptionName.replace(
+        new RegExp(translateWord.src, 'g'),
+        translateWord.dest,
+      );
+    }
+    return translatedOptionName;
   }
 }
