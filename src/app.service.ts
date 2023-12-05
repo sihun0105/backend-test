@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Category, ConvertedProduct } from './challenge1-type';
+import { Category } from './challenge1-type';
+import { UtilsService } from './utils/utils.service';
 
 @Injectable()
 export class AppService {
+  constructor(private readonly utilsService: UtilsService) {}
   proxy() {
     //API 호출
     return true;
@@ -14,7 +16,7 @@ export class AppService {
    * 목표
    * 상품을 수집할 때 제공된 키워드를 기반으로 카테고리 목록과 매칭하여 상품에 카테고리 정보를 연결하는 프로세스를 구현합니다.
    */
-  challenge1(): number {
+  async challenge1(): Promise<number> {
     const categoryList: Category[] = [
       { id: 1, name: '가구' },
       { id: 2, name: '공구' },
@@ -32,19 +34,11 @@ export class AppService {
       keyword: '가구',
     };
 
-    const matchingCategory = categoryList.find(
-      (category) => category.name === product.keyword,
+    const convertedProduct = await this.utilsService.convertProduct(
+      product,
+      categoryList,
     );
 
-    let convertedProduct: ConvertedProduct | null = null;
-    if (matchingCategory) {
-      convertedProduct = {
-        product: {
-          name: product.name,
-          category: matchingCategory,
-        },
-      };
-    }
     console.log(convertedProduct);
     const end = Date.now();
     return end - start;

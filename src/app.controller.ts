@@ -12,8 +12,8 @@ export class AppController {
   }
 
   @Get('challenge1')
-  challenge1(): number {
-    return this.appService.challenge1();
+  async challenge1(): Promise<number> {
+    return await this.appService.challenge1();
   }
 
   @Get('challenge2')
