@@ -5,7 +5,23 @@ import { Option, TranslateWord } from './challenge2-type';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly utilsService: UtilsService) {}
+  private categoryDict: { [key: string]: Category };
+  constructor(private readonly utilsService: UtilsService) {
+    this.categoryDict = {};
+    const categoryList: Category[] = [
+      { id: 1, name: '가구' },
+      { id: 2, name: '공구' },
+      { id: 3, name: '의류' },
+    ];
+    categoryList.forEach((category) => {
+      this.categoryDict[category.name] = category;
+    });
+    [...new Array(10000)].forEach((_, index) => {
+      const category = { id: index + 4, name: `카테고리${index + 4}` };
+      categoryList.push(category);
+      this.categoryDict[category.name] = category;
+    });
+  }
   proxy() {
     //API 호출
     return true;
@@ -17,16 +33,8 @@ export class AppService {
    * 목표
    * 상품을 수집할 때 제공된 키워드를 기반으로 카테고리 목록과 매칭하여 상품에 카테고리 정보를 연결하는 프로세스를 구현합니다.
    */
-  async challenge1(): Promise<ConvertedProduct> {
-    const categoryList: Category[] = [
-      { id: 1, name: '가구' },
-      { id: 2, name: '공구' },
-      { id: 3, name: '의류' },
-    ];
-    [...new Array(10000)].forEach((_, index) => {
-      categoryList.push({ id: index + 4, name: `카테고리${index + 4}` });
-    });
 
+  async challenge1(): Promise<ConvertedProduct> {
     const start = Date.now();
 
     const product = {
@@ -34,10 +42,9 @@ export class AppService {
       name: '의자',
       keyword: '가구',
     };
-
     const convertedProduct = await this.utilsService.convertProduct(
       product,
-      categoryList,
+      this.categoryDict,
     );
     if (!convertedProduct) {
       throw new Error('상품이 없습니다.');

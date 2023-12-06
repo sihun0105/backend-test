@@ -1,16 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { ConvertedProduct } from 'src/challenge1-type';
+import { Category, ConvertedProduct } from 'src/challenge1-type';
 import { TranslateWord } from 'src/challenge2-type';
 
 @Injectable()
 export class UtilsService {
   async convertProduct(
-    product: any,
-    categoryList: any[],
+    product: {
+      id: number;
+      name: string;
+      keyword: string;
+    },
+    categoryDict: {
+      [key: string]: Category;
+    },
   ): Promise<ConvertedProduct | null> {
-    const matchingCategory = categoryList.find(
-      (category) => category.name === product.keyword,
-    );
+    const matchingCategory = categoryDict[product.keyword];
     let convertedProduct = null;
     if (matchingCategory) {
       convertedProduct = {
