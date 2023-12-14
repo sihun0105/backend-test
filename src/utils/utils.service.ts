@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Category, ConvertedProduct } from 'src/challenge1-type';
+import { TranslateWord } from 'src/challenge2-type';
 
 @Injectable()
 export class UtilsService {
+  private translateWordMap = new Map<string, string>();
+  constructor() {}
   async convertProduct(
     product: {
       id: number;
@@ -25,11 +28,23 @@ export class UtilsService {
     }
     return convertedProduct;
   }
-  async translateOptionName(optionName: string): Promise<string> {
-    let translatedOptionName = optionName
-      .replace('블랙', '검정색')
-      .replace('레드', '빨간색');
-    translatedOptionName = translatedOptionName.replace(/\d+/g, 'A');
-    return translatedOptionName;
+  async translateOptionName(
+    optionName: string,
+    translateWordList: TranslateWord[],
+  ): Promise<string> {
+    if (!this.translateWordMap.size) {
+      translateWordList.forEach((word) => {
+        this.translateWordMap.set(word.src, word.dest);
+      });
+    }
+
+    let words = optionName.split(' ');
+
+    words = words.map((word) => {
+      const translatedWord = this.translateWordMap.get(word);
+      return translatedWord || word;
+    });
+
+    return words.join(' ');
   }
 }

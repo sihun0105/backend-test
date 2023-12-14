@@ -78,13 +78,16 @@ export class AppService {
       { id: 6, name: '레드 M' },
     ];
     [...new Array(50)].forEach((_, index) => {
-      optionList.push({ id: index + 7, name: `블랙${index + 7}` });
+      optionList.push({ id: index + 7, name: `블랙 ${index + 7}` });
     });
     const start = Date.now();
 
     const result = await Promise.all(
       optionList.map(async (option) => {
-        const name = await this.utilsService.translateOptionName(option.name);
+        const name = await this.utilsService.translateOptionName(
+          option.name,
+          translateWordList,
+        );
         return { ...option, name };
       }),
     );
